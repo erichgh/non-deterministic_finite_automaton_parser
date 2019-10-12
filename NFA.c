@@ -163,7 +163,7 @@ int runNFA(Nfa* nfa, char* str) {
 	int i = 0;
 
 	currents = (State**) malloc(sizeof(State*)*nfa->nStates);
-	news = (State**) malloc(sizeof(State*));
+	news = (State**) malloc(sizeof(State*)*nfa->nStates);
 
   for(i = 0; i<nfa->nStates; i++) {
     if (nfa->states[i]->type == START) {
@@ -202,7 +202,7 @@ int addStates(State** new, int sizeNew,State** old, int nStates) {
 	for (int j=0; j<nStates; j++) {
 		found = 0;
 		// Check if the state is in the array
-		for (x = 0; x < sizeNew; x++) {
+		for (x = 0; x < sizeNew+added; x++) {
 			if (new[x] == old[j]) {
 				found = 1;
 			}
