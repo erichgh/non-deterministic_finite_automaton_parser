@@ -5,19 +5,19 @@
 
 struct _Nfa {
 	State** states;
-  int nStates;
+	int nStates;
 };
 
 struct _State {
 	char* name;
-  StateType type;
-  Transition** transitions;
-  int nTrans;
+	StateType type;
+	Transition** transitions;
+	int nTrans;
 };
 
 struct _Transition {
 	char symbol;
-  State** dest;
+	State** dest;
 	int nDest;
 };
 
@@ -27,19 +27,19 @@ Nfa * newNFA(State** states, int nStates) {
 		return NULL;
 	}
 
-  Nfa *new = (Nfa *)malloc(sizeof(Nfa));
-  if (new == NULL){
-    perror ("Error! memory not allocated.\n");
-    return NULL;
-  }
+	Nfa *new = (Nfa *)malloc(sizeof(Nfa));
+	if (new == NULL){
+		perror ("Error! memory not allocated.\n");
+		return NULL;
+	}
 
-  new->nStates = nStates;
+	new->nStates = nStates;
 
-  new->states = (State**) malloc(nStates*sizeof(State*));
-  for(int i = 0; i < nStates; i++) {
-    new->states[i] = states[i];
-  }
-  return new;
+	new->states = (State**) malloc(nStates*sizeof(State*));
+	for(int i = 0; i < nStates; i++) {
+		new->states[i] = states[i];
+	}
+	return new;
 }
 
 void addTransition(State* origin, char symbol, State* dest) {
@@ -67,8 +67,8 @@ void addTransition(State* origin, char symbol, State* dest) {
 		new->nDest = 1;
 		origin->nTrans++;
 		origin->transitions = (Transition **)realloc(origin->transitions, origin->nTrans*sizeof(Transition*));
-	  origin->transitions[origin->nTrans-1] = new;
-	}	else {
+	  	origin->transitions[origin->nTrans-1] = new;
+	} else {
 		new->nDest++;
 		new->dest = (State**) realloc(new->dest, new->nDest*sizeof(State*));
 		new->dest[new->nDest-1] = dest;
@@ -87,26 +87,26 @@ State * newState(char* name, StateType type) {
 	}
 
 	new->name = (char *) malloc((strlen(name)+1) * sizeof(char));
-  if (new->name == NULL){
-    free(new);
+  	if (new->name == NULL){
+   		free(new);
 		perror ("Error! memory not allocated.\n");
 		return NULL;
 	}
 
 	strcpy(new->name, name);
 
-  new->transitions = (Transition **) malloc(sizeof(Transition*));
+  	new->transitions = (Transition **) malloc(sizeof(Transition*));
 	if (new->name == NULL){
 		free(new->name);
-    free(new);
+    	free(new);
 		perror ("Error! memory not allocated.\n");
 		return NULL;
 	}
 
 	new->type = type;
-  new->nTrans = 0;
+  	new->nTrans = 0;
 
-  return new;
+  	return new;
 }
 
 void printNFA(Nfa* nfa) {
@@ -114,19 +114,20 @@ void printNFA(Nfa* nfa) {
 		return;
 	}
 
-  for (int i = 0; i<nfa->nStates; i++) {
-    printState(nfa->states[i]);
-  }
+	for (int i = 0; i<nfa->nStates; i++) {
+		printState(nfa->states[i]);
+	}
 }
 
 void printState(State *state) {
 	if(state == NULL) {
 		return;
 	}
-  printf("Transitions from %s (type %d):\n", state->name, state->type);
-  for(int i=0; i<state->nTrans; i++) {
-    printTransition(state->transitions[i]);
-  }
+	printf("Transitions from %s (type %d):\n", state->name, state->type);
+	
+	for(int i=0; i<state->nTrans; i++) {
+		printTransition(state->transitions[i]);
+	}
 }
 
 void printStates(State **states, int nStates) {
@@ -154,7 +155,7 @@ int runNFA(Nfa* nfa, char* str) {
 		return 0;
 	}
 
-  State** currents = NULL;
+  	State** currents = NULL;
 	State** news = NULL;
 	int nCurrent = 0;
 	int nNew = 0;
@@ -165,29 +166,29 @@ int runNFA(Nfa* nfa, char* str) {
 	currents = (State**) malloc(sizeof(State*)*nfa->nStates);
 	news = (State**) malloc(sizeof(State*)*nfa->nStates);
 
-  for(i = 0; i<nfa->nStates; i++) {
-    if (nfa->states[i]->type == START) {
+	for(i = 0; i<nfa->nStates; i++) {
+		if (nfa->states[i]->type == START) {
 			currents[nCurrent] = nfa->states[i];
 			nCurrent++;
-    }
-  }
+		}
+	}
 
-  for(i = 0; i<strlen(str); i++) {
+	for(i = 0; i<strlen(str); i++) {
 		nNew = 0;
 		for (x = 0; x<nCurrent; x++) {
-	    for(k = 0; k<currents[x]->nTrans; k++) {
-	      if (currents[x]->transitions[k]->symbol == str[i]) {
+			for(k = 0; k<currents[x]->nTrans; k++) {
+				if (currents[x]->transitions[k]->symbol == str[i]) {
 					nNew += addStates(news, nNew, currents[x]->transitions[k]->dest, currents[x]->transitions[k]->nDest);
-	      }
-	    }
+				}
+			}
 		}
 		currents = news;
 		nCurrent = nNew;
-  }
+	}
 
 	printStates(currents, nCurrent);
 	for (x = 0; x<nCurrent; x++) {
-  	if(currents[x]->type == FINAL) {
+		if(currents[x]->type == FINAL) {
 			return 1;
 		}
 	}
@@ -219,9 +220,9 @@ void nfaFree(Nfa* nfa) {
 	if(nfa == NULL) {
 		return;
 	}
-  for (int i=0; i<nfa->nStates; i++) {
-    stateFree(nfa->states[i]);
-  }
+	for (int i=0; i<nfa->nStates; i++) {
+		stateFree(nfa->states[i]);
+	}
 	free(nfa->states);
 	free(nfa);
 }
@@ -230,10 +231,10 @@ void stateFree(State* state) {
 	if(state == NULL) {
 		return;
 	}
-  free(state->name);
-  for (int i=0; i<state->nTrans; i++) {
-    transFree(state->transitions[i]);
-  }
+	free(state->name);
+	for (int i=0; i<state->nTrans; i++) {
+		transFree(state->transitions[i]);
+	}
 	free(state->transitions);
 	free(state);
 }
@@ -245,32 +246,32 @@ void transFree(Transition* t) {
 
 
 int main(void) {
-  State **states = NULL;
-  Nfa* nfa = NULL;
+	State **states = NULL;
+	Nfa* nfa = NULL;
 
-  states = (State**) malloc(3 * sizeof(State*));
+	states = (State**) malloc(3 * sizeof(State*));
 
-  states[0] = newState("q0", START);
-  states[1] = newState("q1", OTHER);
-  states[2] = newState("q2", FINAL);
+	states[0] = newState("q0", START);
+	states[1] = newState("q1", OTHER);
+	states[2] = newState("q2", FINAL);
 
 	addTransition(states[0], '0', states[0]);
-  addTransition(states[0], '1', states[0]);
+  	addTransition(states[0], '1', states[0]);
 	addTransition(states[0], '0', states[1]);
 
-  addTransition(states[1], '1', states[2]);
+  	addTransition(states[1], '1', states[2]);
 
-  nfa = newNFA(states, 3);
+  	nfa = newNFA(states, 3);
 
 
-  printNFA(nfa);
+  	printNFA(nfa);
 
-  if (runNFA(nfa, "00110")) {
-    printf("OK\n");
-  } else {
-    printf("FAILED\n");
-  }
+  	if (runNFA(nfa, "00110")) {
+    	printf("OK\n");
+  	} else {
+    	printf("FAILED\n");
+  	}
 
-  nfaFree(nfa);
-  free(states);
+	nfaFree(nfa);
+	free(states);
 }
