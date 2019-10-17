@@ -1,5 +1,5 @@
-#ifndef AF_H
-#define AF_H
+#ifndef NFA_H
+#define NFA_H
 
 #include <stdio.h>
 #include <stdlib.h>
